@@ -304,6 +304,7 @@ void mesh_event_handler(void *arg, esp_event_base_t event_base,
         }
         // esp_mesh_comm_p2p_start();
         if(esp_mesh_is_root()){
+            xTaskCreate(check_health_task, "HEALTH_TASK", configMINIMAL_STACK_SIZE+1024, NULL, configMAX_PRIORITIES-3, NULL);
             xTaskCreate(tx_root_task, "TX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
             xTaskCreate(rx_root_task, "RX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
         } else {
