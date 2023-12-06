@@ -303,8 +303,13 @@ void mesh_event_handler(void *arg, esp_event_base_t event_base,
             esp_netif_dhcpc_start(netif_sta);
         }
         // esp_mesh_comm_p2p_start();
-        xTaskCreate(tx_task, "TX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL); 
-        xTaskCreate(rx_task, "RX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL); 
+        if(esp_mesh_is_root()){
+            xTaskCreate(tx_root_task, "TX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
+            xTaskCreate(rx_root_task, "RX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
+        } else {
+            xTaskCreate(tx_child_task, "TX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
+            xTaskCreate(rx_child_task, "RX_TASK", configMINIMAL_STACK_SIZE+2048, NULL, configMAX_PRIORITIES-3, NULL);
+        }
     }
     break;
     case MESH_EVENT_PARENT_DISCONNECTED: {
